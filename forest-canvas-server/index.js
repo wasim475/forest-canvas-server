@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 3000
@@ -9,15 +10,8 @@ app.use(express.json())
 
 
 
-/*** ===================================================
-                    * Mongodb code start
- * ===================================================*/
 
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.r95emnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
-console.log(process.env.DB_PASS);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -32,20 +26,43 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const userFormDataCollection = client.db('formDataDB').collection('crafts')
+    app.get('/crafts', async(req, res)=>{
+      const cursor = userFormDataCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+   
+    })
+
+    app.get('/crafts', async (req, res) => {
+      const cursor = userFormDataCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+  })
+
+  app.get('/crafts/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await userFormDataCollection.findOne(query);
+      res.send(result);
+  })
+
+    app.post('/crafts', async(req, res)=>{
+      const formData = req.body;
+      console.log(formData);
+      const result = await userFormDataCollection.insertOne(formData)
+      res.send(result)
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
 
-
-/*** ===================================================
-                    * Mongodb code end
- * ===================================================*/
 
 
 app.get('/', (req, res) => {
