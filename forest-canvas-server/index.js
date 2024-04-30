@@ -27,8 +27,17 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const userFormDataCollection = client.db('formDataDB').collection('crafts')
+    const craftItmsSectionData = client.db('craftsItemsDB').collection('craftitems')
     app.get('/crafts', async(req, res)=>{
       const cursor = userFormDataCollection.find()
+      const result = await cursor.toArray()
+      res.send(result)
+   
+    })
+
+    // Craft item section
+    app.get('/craftitems', async(req, res)=>{
+      const cursor = craftItmsSectionData.find()
       const result = await cursor.toArray()
       res.send(result)
    
@@ -46,11 +55,26 @@ async function run() {
       const result = await userFormDataCollection.findOne(query);
       res.send(result);
   })
+  app.get('/craftitems/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await craftItmsSectionData.findOne(query);
+      res.send(result);
+  })
 
     app.post('/crafts', async(req, res)=>{
       const formData = req.body;
       console.log(formData);
       const result = await userFormDataCollection.insertOne(formData)
+      res.send(result)
+    })
+
+       // Craft item section
+
+    app.post('/craftitems', async(req, res)=>{
+      const craftItemData = req.body;
+      console.log(craftItemDatas);
+      const result = await craftItmsSectionData.insertOne(craftItemData)
       res.send(result)
     })
     // Send a ping to confirm a successful connection
