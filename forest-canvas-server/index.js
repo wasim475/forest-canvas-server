@@ -47,7 +47,7 @@ async function run() {
     const id = req.params.id;
     const query = {_id: new ObjectId(id)}
     const result = await userFormDataCollection.deleteOne(query)
-    res.send()
+    res.send(result)
   })
 
   app.get('/crafts/:id', async (req, res) => {
