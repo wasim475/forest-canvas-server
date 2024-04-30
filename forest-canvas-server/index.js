@@ -57,6 +57,29 @@ async function run() {
       res.send(result);
   })
 
+  app.put('/crafts/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options= {upsert: true}
+      const updateFormData ={
+        $set:{
+          itemName:updateFormData.itemName,
+          subcategoryName:updateFormData.subcategoryName,
+          shortDescription:updateFormData.shortDescription, 
+          price:updateFormData.price, 
+          processingTime:updateFormData.processingTime, 
+          rating:updateFormData.rating, 
+          customization:updateFormData.customization, 
+          stockStatus:updateFormData.stockStatus, 
+          userEmail:updateFormData.userEmail, 
+          userName:updateFormData.userName, 
+          photoUrl: updateFormData.photoUrl
+        }
+      }
+      const result = await userFormDataCollection.findOne(query);
+      res.send(result);
+  })
+
 
     app.post('/crafts', async(req, res)=>{
       const formData = req.body;
