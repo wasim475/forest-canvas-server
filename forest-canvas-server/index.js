@@ -61,7 +61,8 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
       const options= {upsert: true}
-      const updateFormData ={
+      const updateFormData = req.body
+      const upFormData ={
         $set:{
           itemName:updateFormData.itemName,
           subcategoryName:updateFormData.subcategoryName,
@@ -76,7 +77,7 @@ async function run() {
           photoUrl: updateFormData.photoUrl
         }
       }
-      const result = await userFormDataCollection.findOne(query);
+      const result = await userFormDataCollection.updateOne(filter, upFormData);
       res.send(result);
   })
 
