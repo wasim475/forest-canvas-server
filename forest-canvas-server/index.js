@@ -5,8 +5,29 @@ require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 3000
 
-app.use(cors())
+// app.use(cors({
+//   origin:['http://localhost:5173/', 'https://grand-jelly-06773e.netlify.app/', "https://forest-canvas-server-3h55by99a-wasim-hossains-projects.vercel.app"]
+// }))
+const corsOptions = {
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS" ],
+  allowedHeaders:["Content-Type"]
+};
+
+app.use(cors(corsOptions));
+app.options("*",cors(corsOptions))
 app.use(express.json())
+
+
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "https://forest-canvas-server-3h55by99a-wasim-hossains-projects.vercel.app/crafts");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+
 
 
 
@@ -25,7 +46,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const userFormDataCollection = client.db('formDataDB').collection('crafts')
 
     app.get('/crafts', async(req, res)=>{
@@ -93,7 +114,7 @@ async function run() {
 
  
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
